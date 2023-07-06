@@ -2,7 +2,7 @@
 
 fetch("http://localhost:3000/api/products")
 .then(response => response.json())
-.then(response2 => console.table(response2[5]));
+.then(response2 => console.log(response2[5].colors));
 
 /*
 const response = await fetch("http://localhost:3000/api/products");
