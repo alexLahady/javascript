@@ -1,9 +1,11 @@
 //FONCTION
+//RECHARGER LA PAGE
+
 //PERMET DE LIRE LES OBJET DE LOCALSTORAGE
 function valuesLocalStorage(keyString){
     let objLinea = localStorage.getItem(keyString);
     let objJson = JSON.parse(objLinea);
-    console.log(objJson);
+    //console.log(objJson);
     return objJson;
 }
 
@@ -63,31 +65,29 @@ function addtLocalStorage(id,quantity,color){
 
 //CALCUL LA SOMME DE TOUS LES CANAPE ET LA QUANTITE DES CANAPE 
 //RENVOI LA VALEUR DANS UN TABLEAU 
-function sumTotal(){
-    let resID, resQuantity, res;
+function sumTotal(object){
+    let resID, resQuantity, resPrice;
     let sumQuantity = 0;
-    let tab =[];
+    let res = 0;
 
-    fetch("http://localhost:3000/api/products")
-    .then(response => response.json())
-    .then(affiche => {
-        for(let i = 0;i<localStorage.length;i++){
-            resID = valuesLocalStorage(localStorage.key(i)).id;
-            //resID = parseInt(resID);
+    
+    for(let i = 0;i<localStorage.length;i++){
+        resID = valuesLocalStorage(localStorage.key(i)).id;
+        //resID = parseInt(resID);
 
-            resQuantity = valuesLocalStorage(localStorage.key(i)).quantity;
-            resQuantity = parseInt(resQuantity);
+        resQuantity = valuesLocalStorage(localStorage.key(i)).quantity;
+        resQuantity = parseInt(resQuantity);
 
-            res = affiche[resID].price * resQuantity;
-            console.log(res);
-            res += res;
-            console.log("la somme est de "+res);
-            sumQuantity += resQuantity;
-        }
-        tab = [sumQuantity,res];
-        console.log(tab);
-        return tab;
-    })
+        resPrice = object[resID].price;
+        //resPrice = parseInt(resPrice);
+
+        //console.log("res est "+res);
+        res = res + (resPrice * resQuantity);
+        //console.log(res);
+        //console.log("la somme est de "+res);
+        sumQuantity += resQuantity;
+    }
+    return [sumQuantity,res];
 };
 
 
@@ -124,11 +124,11 @@ if(id != null){
         let cartObject = JSON.stringify(canap);
         localStorage.setItem("panier 0",cartObject);
     }else{
-        if(verifIdQuantityExist(id,quantity,color)==false){
+        if(verifIdQuantityExist(id,quantity,color)==false){// utilsier le ! pour inverser if(!verifIdQuantityExist(id,quantity,color))
             addtLocalStorage(id,quantity,color);
         }
     }
-    });
+    })
 };  
 
 //AFFICHER LA LISTE DES RESULTATS
@@ -233,16 +233,20 @@ fetch("http://localhost:3000/api/products")
         cartContentElement.appendChild(cartDeleteElement);
         cartDeleteElement.appendChild(cartDeleteItemElement);
     }
-    /*
-    let tab = []
-    tab = sumTotal();
-    console.log(tab);
+    /*setTimeout(() => {
+      window.location.reload()
+    }, '60000')
+    */
+    let tab = sumTotal(affiche);
+    //console.log("le tableau est ["+tab+"]");
     let totalQuantity = document.getElementById("totalQuantity");
-    totalQuantity.innerHTML = tab[1];
+    totalQuantity.innerHTML = tab[0];
 
     let totalPrice = document.getElementById("totalPrice");
-    totalPrice.innerHTML = tab[0];
-    */
+    totalPrice.innerHTML = tab[1];
+    
 
 });
+//location.reload();
+
 
