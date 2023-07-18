@@ -7,21 +7,14 @@ function valuesLocalStorage(keyString){
     return objJson;
 }
 
-//TAILLE DU STORAGE 
-function withStorage(){
-    res = valuesLocalStorage("panier")
-    return res.length;
-    
-}
 
 //VERIFIE S'IL EXISTE UN DOUBLON
 //S'IL EXISTE AJOUTER DANS LA CATEGORIE QUANTITE
 //SINON PASSER 
 function verifIdQuantityExist(id,quantity,color){
     let res = valuesLocalStorage("panier");
-    let taille = withStorage();
     
-    for(let i = 0;i<taille;i++){
+    for(let i = 0;i<res.length;i++){
 
         resID = res[i].id;
         resColor = res[i].color;
@@ -61,15 +54,15 @@ function addtLocalStorage(id,quantity,color){
 //CALCUL LA SOMME DE TOUS LES CANAPE ET LA QUANTITE DES CANAPE 
 //RENVOI LA VALEUR DANS UN TABLEAU 
 function sumTotal(object){
+    let value =  valuesLocalStorage("panier");
     let resID, resQuantity, resPrice;
     let sumQuantity = 0;
     let res = 0;
-    let taille = withStorage();
 
-    for(let i = 0;i < taille ;i++){
-        resID = valuesLocalStorage("panier")[i].id;
+    for(let i = 0;i < value.length ;i++){
+        resID = value[i].id;
 
-        resQuantity = valuesLocalStorage("panier")[i].quantity;
+        resQuantity = value[i].quantity;
         resQuantity = parseInt(resQuantity);
 
         resPrice = object[resID].price;
@@ -101,6 +94,26 @@ function changeQuantity(index,quantity){
     
 };
 
+//FONCTTION FOMRULAIRE
+
+function formulaireError(idInput,idError){
+    let formInput = document.getElementById(idInput);     
+    let formError = document.getElementById(idError);
+
+    formInput.addEventListener("blur", (event) => {
+        if (idInput == "email" && formInput.value == '@'){
+            formError.innerHTML = "Le champ n'est pas très bien rempli";
+        }
+        else if (idInput == "email"  && formInput.value.length > 0 && !formInput.value.includes("@") ){
+            formError.innerHTML = "Il manque le @";
+        }
+        else if (formInput.value == ""){
+            formError.innerHTML = "Le champ n'est pas rempli";
+        }else{
+            formError.innerHTML = "";
+        }
+    });
+}
 
 
 
@@ -156,20 +169,19 @@ fetch("http://localhost:3000/api/products")
 
 //AFFICHER LA LISTE DES RESULTATS
 
-        let resID, resColor, resQuantity;
+        let value, resID, resColor, resQuantity;
         let cartOriginElement = document.getElementById('cart__items');
 
-        //withStorage();
-        let taille = withStorage();
+        value = valuesLocalStorage("panier");
 
-        for(let i = 0;i< taille;i++){
+        for(let i = 0;i < value.length;i++){
             //VARIABLE
-            resID = valuesLocalStorage("panier")[i].id;
+            resID = value[i].id;
             resID = parseInt(resID);
 
-            resColor = valuesLocalStorage("panier")[i].color;
+            resColor = value[i].color;
 
-            resQuantity = valuesLocalStorage("panier")[i].quantity;
+            resQuantity = value[i].quantity;
             resQuantity = parseInt(resQuantity);
 
             //GRAND PARENT
@@ -246,8 +258,8 @@ fetch("http://localhost:3000/api/products")
 
             //click et modifier ?? quantité
             cartInputElement.addEventListener("click", (event) => {
-                const r3 = cartInputElement.value;
-                changeQuantity(i,r3);
+                const r2 = cartInputElement.value;
+                changeQuantity(i,r2);
 
                 let tab = sumTotal(affiche);
 
@@ -273,9 +285,6 @@ fetch("http://localhost:3000/api/products")
             //click supprimeer
             cartDeleteElement.addEventListener("click", (event) => {
                 const r1 = cartDeleteElement.closest(':not(div)');
-                console.log(r1);
-                console.log(r1.dataset.id);
-                console.log(r1.dataset.color);
                 deleteLocal(r1.dataset.id,r1.dataset.color);
                 window.location.reload();
 
@@ -293,9 +302,37 @@ fetch("http://localhost:3000/api/products")
         totalPrice.innerHTML = tab[1];
 
         //FORMULAIRE
+        formulaireError('firstName','firstNameErrorMsg');
+        formulaireError('lastName','lastNameErrorMsg');
+        formulaireError('address','addressErrorMsg');
+        formulaireError('city','cityErrorMsg');
+        formulaireError('email','emailErrorMsg');
 
-        let formErrorElement = document.getElementById('firstNameErrorMsg');
-        formErrorElement.innerHTML = "TU T'ES TROMPÉ SALE BATARD";
+        
+        //CONSTRUCTION DE L'OBJET POST
+        let firstName = url.searchParams.get("firstName");
+        if(firstName != null){
+            let lastName = url.searchParams.get("lastName");
+            let address = url.searchParams.get("address");
+            let city = url.searchParams.get("city");
+            let email = url.searchParams.get("email");
+
+            let contact = {
+                    firstName : firstName,
+                    lastName: lastName,
+                    address: address,
+                    city: city,
+                    email: email 
+                };
+            let products = valuesLocalStorage("panier");
+
+            let data = {contact,products};
+            
+            //console.log(data);
+        
+        };
+        
+        
 
 
 });

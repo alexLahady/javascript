@@ -57,13 +57,13 @@ fetch("http://localhost:3000/api/products")
 
     button.addEventListener("click", (event) => {
         let quantity = document.getElementById("quantity").value;
-        console.log("La quantité d'article est de "+quantity);
+        //console.log("La quantité d'article est de "+quantity);
 
         let color = document.getElementById("colors").value;
-        console.log(color);
+        //console.log(color);
 
         linkCardElement.href= "./cart.html?id="+id+"&quantity="+quantity+"&color="+color;
-        console.log(linkCardElement);
+        //console.log(linkCardElement);
 
     });
 });
