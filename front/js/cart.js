@@ -311,6 +311,7 @@ fetch("http://localhost:3000/api/products")
         
         //CONSTRUCTION DE L'OBJET POST
         let firstName = url.searchParams.get("firstName");
+        //firstName = document.getElementById("firstName").value;
         if(firstName != null){
             let lastName = url.searchParams.get("lastName");
             let address = url.searchParams.get("address");
@@ -327,58 +328,17 @@ fetch("http://localhost:3000/api/products")
             let products = valuesLocalStorage("panier");
 
             let data = {contact,products};
-            
-            //console.log(data);
-        
-        };
-        
-        
-
-
-});
-
-//quand on va commander récupérer les values au cas ou l'utilisateur veut les modifier
-//Pour changer la valeur de la quanftité en direct il faut utiliser element.closet pour chaque valeur de input
-//on doit le changer avec addEventListener
-
-// pour supprimer soit faire remove et faire un reload soit faire autrement 
-//Supprimer l'élément localStorage.removeItem("clé")
-//Cherher la clé grâce à l'id et la couleur et pas l'inverse
-
-// exemple de post 
-/*
-fetch("https://localhost:3000/login", {
-  method: "POST",
-  body: form
-})
-*/
-
-
-// comment faire la commande 
-/*
-fetch("http://localhost:3000/api/products/order", {
+            console.log(data);
+            /*
+            fetch("http://localhost:3000/api/products/order", {
             method: "POST",
-            //body:  ton objet contact + tableau de produits ,
+            body:  data,
             headers: {
                 "Content-Type": "application/json",
-            },
+                },
+            })
+            */
+        }
+        
 });
-*/
-/*
-{
-    contact = {
-        firstName: "donnée",
-        lastName: "donnée",
-        address: "donnée",
-        city: "donnée",
-        email: "donnée"
-    },
-    products = [
-        //{  canapé du panier 1 },
-        //{  canapé du panier 2  },
-        //{  canapé du panier 3  }
-    ]
-}
-
-let data = {contact, products}
-*/
+        
