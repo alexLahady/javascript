@@ -310,35 +310,47 @@ fetch("http://localhost:3000/api/products")
 
         
         //CONSTRUCTION DE L'OBJET POST
+        //orderElement = document.getElementById('order');
+
+        /*
+        orderElement.addEventListener('click' ,(event) => {
+            firstName = document.getElementById('firstName').value;
+            console.log(firstName);
+            lastName = document.getElementById('lastName').value;
+            address = document.getElementById('address').value;
+            city = document.getElementById('city').value;
+            email = document.getElementById('email').value;
+            */
         let firstName = url.searchParams.get("firstName");
-        //firstName = document.getElementById("firstName").value;
         if(firstName != null){
             let lastName = url.searchParams.get("lastName");
             let address = url.searchParams.get("address");
             let city = url.searchParams.get("city");
             let email = url.searchParams.get("email");
-
+            
             let contact = {
-                    firstName : firstName,
-                    lastName: lastName,
-                    address: address,
-                    city: city,
-                    email: email 
-                };
+                firstName : firstName,
+                lastName: lastName,
+                address: address,
+                city: city,
+                email: email 
+            };
             let products = valuesLocalStorage("panier");
 
             let data = {contact,products};
             console.log(data);
-            /*
+            
             fetch("http://localhost:3000/api/products/order", {
             method: "POST",
-            body:  data,
+            body:  JSON.stringify(data),
             headers: {
                 "Content-Type": "application/json",
                 },
             })
-            */
-        }
+        };
+        
+
+           
         
 });
         
