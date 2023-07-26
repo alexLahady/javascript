@@ -7,32 +7,40 @@ function valuesLocalStorage(keyString){
     return objJson;
 }
 
+//PRODUCTID
+function tabProdutsID(object,products) {
+    let tab =[];
+    for(let i = 0;i < products.length; i++){
+        let resID = products[i].id;
+        tab.push(object[resID]._id);
+    }
+    return tab;
+}
+
 
 //VERIFIE S'IL EXISTE UN DOUBLON
 //S'IL EXISTE AJOUTER DANS LA CATEGORIE QUANTITE
 //SINON PASSER 
 function verifIdQuantityExist(id,quantity,color){
     let res = valuesLocalStorage("panier");
-    
-    for(let i = 0;i<res.length;i++){
+        for(let i = 0;i < res.length;i++){
 
-        resID = res[i].id;
-        resColor = res[i].color;
-
-        if( (resID == id) && (resColor == color) ){
+            resID = res[i].id;
+            resColor = res[i].color;
+        
+            if( (resID == id) && (resColor == color) ){
+                    
+                resQuantity = res[i].quantity;
+                resQuantity = parseInt(resQuantity);
             
-            resQuantity = res[i].quantity;
-            resQuantity = parseInt(resQuantity);
-    
-            res[i].quantity = resQuantity + parseInt(quantity);
-            
-            let cartObject = JSON.stringify(res);
-            localStorage.setItem("panier",cartObject);
-            //console.log("c'est vrai");
-            return true;
-        }
+                res[i].quantity = resQuantity + parseInt(quantity);
+                    
+                let cartObject = JSON.stringify(res);
+                localStorage.setItem("panier",cartObject);
+                //console.log("c'est vrai");
+                return true;
+            }
     }
-    
     return false;
 };
 
@@ -100,12 +108,18 @@ function formulaireError(idInput,idError){
     let formInput = document.getElementById(idInput);     
     let formError = document.getElementById(idError);
 
+    //variable de test si un chiffre existe
+    let masque = /[0-9]/;
+
     formInput.addEventListener("blur", (event) => {
         if (idInput == "email" && formInput.value == '@'){
             formError.innerHTML = "Le champ n'est pas très bien rempli";
         }
         else if (idInput == "email"  && formInput.value.length > 0 && !formInput.value.includes("@") ){
             formError.innerHTML = "Il manque le @";
+        }
+        else if ( (idInput == "firstName" || idInput == "lastName") && masque.test(formInput.value) ) {
+            formError.innerHTML = "Il y a un chiffre dans le champ";
         }
         else if (formInput.value == ""){
             formError.innerHTML = "Le champ n'est pas rempli";
@@ -302,6 +316,7 @@ fetch("http://localhost:3000/api/products")
         totalPrice.innerHTML = tab[1];
 
         //FORMULAIRE
+        //refaire cette partie pour éliminer toute les possiblité avec resEX
         formulaireError('firstName','firstNameErrorMsg');
         formulaireError('lastName','lastNameErrorMsg');
         formulaireError('address','addressErrorMsg');
@@ -310,23 +325,17 @@ fetch("http://localhost:3000/api/products")
 
         
         //CONSTRUCTION DE L'OBJET POST
-        //orderElement = document.getElementById('order');
+        orderElement = document.querySelector('.cart__order__form');
 
-        /*
-        orderElement.addEventListener('click' ,(event) => {
-            firstName = document.getElementById('firstName').value;
-            console.log(firstName);
-            lastName = document.getElementById('lastName').value;
-            address = document.getElementById('address').value;
-            city = document.getElementById('city').value;
-            email = document.getElementById('email').value;
-            */
-        let firstName = url.searchParams.get("firstName");
-        if(firstName != null){
-            let lastName = url.searchParams.get("lastName");
-            let address = url.searchParams.get("address");
-            let city = url.searchParams.get("city");
-            let email = url.searchParams.get("email");
+        //let products = valuesLocalStorage("panier");
+        //products = tabProdutsID(affiche,products)
+        
+        orderElement.onsubmit = (event) => {
+            let firstName = document.getElementById('firstName').value;
+            let lastName = document.getElementById('lastName').value;
+            let address = document.getElementById('address').value;
+            let city = document.getElementById('city').value;
+            let email = document.getElementById('email').value;
             
             let contact = {
                 firstName : firstName,
@@ -334,23 +343,37 @@ fetch("http://localhost:3000/api/products")
                 address: address,
                 city: city,
                 email: email 
-            };
+            }
             let products = valuesLocalStorage("panier");
+            products = tabProdutsID(affiche,products);
+            //refaire la partie product pour que se soit un un tableau de sting avec bas les infos ?? qu'on donne 
 
             let data = {contact,products};
-            console.log(data);
-            
+            //console.log(data);
+
             fetch("http://localhost:3000/api/products/order", {
             method: "POST",
             body:  JSON.stringify(data),
             headers: {
                 "Content-Type": "application/json",
-                },
+                }
+            })       
+            .then((response) => response.json())
+            .then((result) => {
+                if(result.orderId != undefined){
+                    //console.log("le projet a bien été ajouter :", result);
+                    //console.log(result.orderId);
+                    window.location.href = "./confirmation.html?id="+result.orderId;
+                }else {
+                    console.log('il y a une erreur');
+                }
             })
-        };
-        
+            .catch((error) => {
+                console.error("Error :", error.message);
+            })
 
+           event.preventDefault();
+        }
            
         
 });
-        
