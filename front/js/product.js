@@ -2,8 +2,8 @@ let resultat = window.location;
 console.log(resultat);
 let url = new URL(resultat);
 let id = url.searchParams.get("id");
-//console.log("voici l'id numero "+id);
 
+//AFFICHE L'ÉLÉMEN EN FOCNTION DE L'ID REÇU
 fetch("http://localhost:3000/api/products")
 .then(response => response.json())
 .then(affiche => {
@@ -31,13 +31,11 @@ fetch("http://localhost:3000/api/products")
 
     //COULEURS
     const colorsElement = document.getElementById("colors");
-    //console.log("la longueur du tableau couleurs est de "+affiche[id].colors.length);
     
     for(let i=0; i<affiche[id].colors.length;i++){
         const optionElement = document.createElement("option");
         optionElement.value = affiche[id].colors[i];
         optionElement.innerText = affiche[id].colors[i];
-        //console.log(optionElement);
         colorsElement.appendChild(optionElement); 
     }   
 
@@ -48,8 +46,7 @@ fetch("http://localhost:3000/api/products")
     const cardElement = document.getElementById("addToCart");
     const linkCardElement = document.createElement('a');
     linkCardElement.href= "./cart.html";
-    console.log(linkCardElement);
-
+    
     addButtonElement.appendChild(linkCardElement);
     linkCardElement.appendChild(cardElement);
     
@@ -57,13 +54,10 @@ fetch("http://localhost:3000/api/products")
 
     button.addEventListener("click", (event) => {
         let quantity = document.getElementById("quantity").value;
-        //console.log("La quantité d'article est de "+quantity);
 
         let color = document.getElementById("colors").value;
-        //console.log(color);
-
+    
         linkCardElement.href= "./cart.html?id="+id+"&quantity="+quantity+"&color="+color;
-        //console.log(linkCardElement);
 
     });
 });

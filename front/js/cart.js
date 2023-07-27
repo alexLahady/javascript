@@ -1,5 +1,5 @@
 //FONCTION
-//PERMET DE LIRE LES OBJET DE LOCALSTORAGE
+//PERMET DE LIRE LES OBJETS DE LOCALSTORAGE
 function valuesLocalStorage(keyString){
     let objLinea = localStorage.getItem(keyString);
     let objJson = JSON.parse(objLinea);
@@ -7,7 +7,7 @@ function valuesLocalStorage(keyString){
     return objJson;
 }
 
-//PRODUCTID
+//PERMET DE FAIRE UN TABLEAU _ID DE L'API EN FONCTION DES PRODUITS DANS LE PANIER
 function tabProdutsID(object,products) {
     let tab =[];
     for(let i = 0;i < products.length; i++){
@@ -17,29 +17,28 @@ function tabProdutsID(object,products) {
     return tab;
 }
 
-
 //VERIFIE S'IL EXISTE UN DOUBLON
-//S'IL EXISTE AJOUTER DANS LA CATEGORIE QUANTITE
+//S'IL EXISTE ADDICTIONNER DANS LA CATEGORIE QUANTITE
 //SINON PASSER 
 function verifIdQuantityExist(id,quantity,color){
     let res = valuesLocalStorage("panier");
-        for(let i = 0;i < res.length;i++){
+    for(let i = 0;i < res.length;i++){
 
-            resID = res[i].id;
-            resColor = res[i].color;
+        let resID = res[i].id;
+        let resColor = res[i].color;
         
-            if( (resID == id) && (resColor == color) ){
+        if( (resID == id) && (resColor == color) ){
                     
-                resQuantity = res[i].quantity;
-                resQuantity = parseInt(resQuantity);
+            let resQuantity = res[i].quantity;
+            resQuantity = parseInt(resQuantity);
             
-                res[i].quantity = resQuantity + parseInt(quantity);
+            res[i].quantity = resQuantity + parseInt(quantity);
                     
-                let cartObject = JSON.stringify(res);
-                localStorage.setItem("panier",cartObject);
-                //console.log("c'est vrai");
-                return true;
-            }
+            let cartObject = JSON.stringify(res);
+            localStorage.setItem("panier",cartObject);
+                
+            return true;
+        }
     }
     return false;
 };
@@ -57,7 +56,6 @@ function addtLocalStorage(id,quantity,color){
     localStorage.setItem("panier",cartObject);
 
 };
-
 
 //CALCUL LA SOMME DE TOUS LES CANAPE ET LA QUANTITE DES CANAPE 
 //RENVOI LA VALEUR DANS UN TABLEAU 
@@ -81,70 +79,79 @@ function sumTotal(object){
     return [sumQuantity,res];
 };
 
-//SUPPRIMER
+//SUPPRIME L'ÉLÉMENT DANS LOCALSTORAGE EN FONCTION DE L'ID ET LA COULEUR
 function deleteLocal(id,color){
     let res = valuesLocalStorage("panier");
-    let panier = res.filter((element) => element.id !== id || element.color !== color);
+    let panier = res.filter((element) => element.id != id || element.color != color);
 
     let cartObject = JSON.stringify(panier);
     localStorage.setItem("panier",cartObject);
     
 };
 
-//CHANGE LA QUANTITE ET RECALCULE LA SOMME 
-
-function changeQuantity(index,quantity){
+//CHANGE LA QUANTITÉ
+function changeQuantity(id,color,quantity){
     let res = valuesLocalStorage("panier");
-    res[index].quantity = parseInt(quantity);
-    
+    for(let i = 0;i < res.length;i++){
+        if(res[i].id == id && res[i].color == color){
+            res[i].quantity = quantity;
+            break;
+        }
+    }
     let cartObject = JSON.stringify(res);
     localStorage.setItem("panier",cartObject);
     
 };
 
-//FONCTTION FOMRULAIRE
-
+//FONCTTION FOMRULAIRE POUR LES ERREURS
 function formulaireError(idInput,idError){
     let formInput = document.getElementById(idInput);     
     let formError = document.getElementById(idError);
 
-    //variable de test si un chiffre existe
+    //CHAINE DE CARACTÈRE POUR TESTER SI UN CHIFFRE EXISTE
     let masque = /[0-9]/;
 
     formInput.addEventListener("blur", (event) => {
+
+        //TEST SI DANS LA PARTIE EMAIL IL EXISTE JUSTE UN @
         if (idInput == "email" && formInput.value == '@'){
             formError.innerHTML = "Le champ n'est pas très bien rempli";
         }
+
+        //TEST SI DANS LA PARTIE EMAIL IL EXISTE UN TEXTE MAIS SANS LE @
         else if (idInput == "email"  && formInput.value.length > 0 && !formInput.value.includes("@") ){
             formError.innerHTML = "Il manque le @";
         }
+
+        //TEST SI DANS LA PARTIE FIRSTNAME ET LASTNAME ILS EXISTENT UN CHIFFRE
         else if ( (idInput == "firstName" || idInput == "lastName") && masque.test(formInput.value) ) {
             formError.innerHTML = "Il y a un chiffre dans le champ";
         }
+
+        //TEST SI LE CHAMP EST VIDE
         else if (formInput.value == ""){
             formError.innerHTML = "Le champ n'est pas rempli";
-        }else{
+        }
+        
+        //CELA VEUT DIRE QUE LE CHAMP CORRESPONDANT RESPECTE TOUTES LES CONDITIONS
+        else{
             formError.innerHTML = "";
         }
     });
 }
 
 
-
-
-
 //MAIN
 
-//SI ON A UNE VALEUR A AJOUTER
 let resultat = window.location;
-//console.log(resultat);
 let url = new URL(resultat);
 let id = url.searchParams.get("id");
 fetch("http://localhost:3000/api/products")
     .then(response => response.json())
     .then(affiche => {
+        //SI ON A UNE VALEUR A AJOUTER
+
         if(id != null){
-        //console.log("il y a quelques chose");
         
             let quantity = url.searchParams.get("quantity");
             if(quantity == 0){ 
@@ -158,8 +165,7 @@ fetch("http://localhost:3000/api/products")
             //REMET L'URL À LA NORMAL DONC CART.HTML
             window.history.replaceState(null, null, "./cart.html");
             
-            //console.log("id : "+id+" quantité : "+quantity+" couleur : "+color);
-            //console.log("taille du local "+localStorage.length);
+            //AJOUTE UN NOUVELLE ÉLÉMENT DANS LOCALSTORAGE SI LE LOCAL EST VIDE
             if(localStorage.length == 0){
                 let tabStorage = [];
 
@@ -170,7 +176,6 @@ fetch("http://localhost:3000/api/products")
                 }
                 
                 tabStorage.push(canap);
-                console.log(tabStorage);
 
                 let cartObject = JSON.stringify(tabStorage);
                 localStorage.setItem("panier",cartObject);
@@ -182,198 +187,205 @@ fetch("http://localhost:3000/api/products")
         }   
 
 //AFFICHER LA LISTE DES RESULTATS
+        if(localStorage.length > 0){
 
-        let value, resID, resColor, resQuantity;
-        let cartOriginElement = document.getElementById('cart__items');
+            let value, resID, resColor, resQuantity;
+            let cartOriginElement = document.getElementById('cart__items');
 
-        value = valuesLocalStorage("panier");
+            value = valuesLocalStorage("panier");
 
-        for(let i = 0;i < value.length;i++){
-            //VARIABLE
-            resID = value[i].id;
-            resID = parseInt(resID);
+            for(let i = 0;i < value.length;i++){
+                //VARIABLE
+                resID = value[i].id;
+                resID = parseInt(resID);
 
-            resColor = value[i].color;
+                resColor = value[i].color;
 
-            resQuantity = value[i].quantity;
-            resQuantity = parseInt(resQuantity);
+                resQuantity = value[i].quantity;
+                resQuantity = parseInt(resQuantity);
 
-            //GRAND PARENT
+                //GRAND PARENT
 
-            let cartArticleElement = document.createElement('article');
-            cartArticleElement.classList.add("cart__item");
-            cartArticleElement.dataset.id = String(resID);
-            cartArticleElement.dataset.color = resColor;
-            
-            cartOriginElement.appendChild(cartArticleElement);
+                let cartArticleElement = document.createElement('article');
+                cartArticleElement.classList.add("cart__item");
+                cartArticleElement.dataset.id = String(resID);
+                cartArticleElement.dataset.color = resColor;
+                
+                cartOriginElement.appendChild(cartArticleElement);
 
-            //PANIER IMAGE
+                //PANIER IMAGE
 
-            let cartImgElement = document.createElement("div");
-            cartImgElement.classList.add("cart__item__img");
+                let cartImgElement = document.createElement("div");
+                cartImgElement.classList.add("cart__item__img");
 
-            let imgElement = document.createElement('img');
-            imgElement.src = affiche[resID].imageUrl;
-            imgElement.alt = affiche[resID].altTxt;
+                let imgElement = document.createElement('img');
+                imgElement.src = affiche[resID].imageUrl;
+                imgElement.alt = affiche[resID].altTxt;
 
-            cartArticleElement.appendChild(cartImgElement);
-            cartImgElement.appendChild(imgElement);
+                cartArticleElement.appendChild(cartImgElement);
+                cartImgElement.appendChild(imgElement);
 
-            //CONTENU
+                //CONTENU
 
-            let cartContentElement = document.createElement("div");
-            cartContentElement.classList.add("cart__item__content");
+                let cartContentElement = document.createElement("div");
+                cartContentElement.classList.add("cart__item__content");
 
-            cartArticleElement.appendChild(cartContentElement);
+                cartArticleElement.appendChild(cartContentElement);
 
-            //DESCRITION DU PRODUIT
+                //DESCRITION DU PRODUIT
 
-            let cartDescritptionElement = document.createElement("div");
-            cartDescritptionElement.classList.add("cart__item__content__description");
+                let cartDescritptionElement = document.createElement("div");
+                cartDescritptionElement.classList.add("cart__item__content__description");
 
-            let cartTitleElement = document.createElement('h2');
-            cartTitleElement.innerHTML = affiche[resID].name;
+                let cartTitleElement = document.createElement('h2');
+                cartTitleElement.innerHTML = affiche[resID].name;
 
-            let cartColorElement = document.createElement('p');
-            cartColorElement.innerHTML = resColor;
+                let cartColorElement = document.createElement('p');
+                cartColorElement.innerHTML = resColor;
 
-            let cartPriceElement = document.createElement('p');
-            cartPriceElement.innerHTML = affiche[resID].price +" €";
+                let cartPriceElement = document.createElement('p');
+                cartPriceElement.innerHTML = affiche[resID].price +" €";
 
-            cartContentElement.appendChild(cartDescritptionElement);
-            cartDescritptionElement.appendChild(cartTitleElement);
-            cartDescritptionElement.appendChild(cartColorElement);
-            cartDescritptionElement.appendChild(cartPriceElement);
+                cartContentElement.appendChild(cartDescritptionElement);
+                cartDescritptionElement.appendChild(cartTitleElement);
+                cartDescritptionElement.appendChild(cartColorElement);
+                cartDescritptionElement.appendChild(cartPriceElement);
 
-            //AFFICHER LA QUANTITE
-            
-            let cartContentSetttingElement = document.createElement("div");
-            cartContentSetttingElement.classList.add("cart__item__content__settings");
+                //AFFICHER LA QUANTITE
+                
+                let cartContentSetttingElement = document.createElement("div");
+                cartContentSetttingElement.classList.add("cart__item__content__settings");
 
-            let cartQuantityElement = document.createElement("div");
-            cartQuantityElement.classList.add("cart__item__content__settings__quantity");
+                let cartQuantityElement = document.createElement("div");
+                cartQuantityElement.classList.add("cart__item__content__settings__quantity");
 
-            cartContentElement.appendChild(cartContentSetttingElement);
-            cartContentSetttingElement.appendChild(cartQuantityElement);
+                cartContentElement.appendChild(cartContentSetttingElement);
+                cartContentSetttingElement.appendChild(cartQuantityElement);
 
-            let cartTextElement = document.createElement("p");
-            cartTextElement.innerHTML = "Qté : ";
+                let cartTextElement = document.createElement("p");
+                cartTextElement.innerHTML = "Qté : ";
 
-            let cartInputElement = document.createElement('input');
-            cartInputElement.type = "number";
-            cartInputElement.classList.add("itemQuantity");
-            cartInputElement.name = "itemQuantity";
-            cartInputElement.min = "1";
-            cartInputElement.max = "100";
-            cartInputElement.value = String(resQuantity);
+                let cartInputElement = document.createElement('input');
+                cartInputElement.type = "number";
+                cartInputElement.classList.add("itemQuantity");
+                cartInputElement.name = "itemQuantity";
+                cartInputElement.min = "1";
+                cartInputElement.max = "100";
+                cartInputElement.value = String(resQuantity);
 
-            cartQuantityElement.appendChild(cartTextElement);
-            cartQuantityElement.appendChild(cartInputElement);
+                cartQuantityElement.appendChild(cartTextElement);
+                cartQuantityElement.appendChild(cartInputElement);
 
-            //click et modifier ?? quantité
-            cartInputElement.addEventListener("click", (event) => {
-                const r2 = cartInputElement.value;
-                changeQuantity(i,r2);
+                //CHANGE LA VALEUR DE LA QUANTITÉ À CHAQUE CLIQUE
+                cartInputElement.addEventListener("click", (event) => {
+                    const r3 = cartDeleteElement.closest(':not(div)');
+                    const r2 = cartInputElement.value;
+                    
+                    changeQuantity(r3.dataset.id,r3.dataset.color,r2);
 
-                let tab = sumTotal(affiche);
+                    let tab = sumTotal(affiche);
 
-                let totalQuantity = document.getElementById("totalQuantity");
-                totalQuantity.innerHTML = tab[0];
+                    let totalQuantity = document.getElementById("totalQuantity");
+                    totalQuantity.innerHTML = tab[0];
 
-                let totalPrice = document.getElementById("totalPrice");
-                totalPrice.innerHTML = tab[1];
-            });
-            
-            //SUPPRIMER
+                    let totalPrice = document.getElementById("totalPrice");
+                    totalPrice.innerHTML = tab[1];
+                });
+                
+                //SUPPRIMER
 
-            let cartDeleteElement = document.createElement('div');
-            cartDeleteElement.classList.add("cart__item__content__settings__delete");
+                let cartDeleteElement = document.createElement('div');
+                cartDeleteElement.classList.add("cart__item__content__settings__delete");
 
-            let cartDeleteItemElement = document.createElement('p');
-            cartDeleteItemElement.classList.add("deleteItem");
-            cartDeleteItemElement.innerHTML = "Supprimer";
+                let cartDeleteItemElement = document.createElement('p');
+                cartDeleteItemElement.classList.add("deleteItem");
+                cartDeleteItemElement.innerHTML = "Supprimer";
 
-            cartContentElement.appendChild(cartDeleteElement);
-            cartDeleteElement.appendChild(cartDeleteItemElement);
+                cartContentElement.appendChild(cartDeleteElement);
+                cartDeleteElement.appendChild(cartDeleteItemElement);
 
-            //click supprimeer
-            cartDeleteElement.addEventListener("click", (event) => {
-                const r1 = cartDeleteElement.closest(':not(div)');
-                deleteLocal(r1.dataset.id,r1.dataset.color);
-                window.location.reload();
+                //SUPPRIME L'ÉLÉMENT QUAND ON CLIQUE SUR 'SUPPRIMER'
+                cartDeleteElement.addEventListener("click", (event) => {
+                    const r1 = cartDeleteElement.closest(':not(div)');
+                    deleteLocal(r1.dataset.id,r1.dataset.color);
+                    r1.remove();
+                    //window.location.reload();
 
-            });
-            
+                    let tab = sumTotal(affiche);
 
-        }
-        
-        let tab = sumTotal(affiche);
+                    let totalQuantity = document.getElementById("totalQuantity");
+                    totalQuantity.innerHTML = tab[0];
 
-        let totalQuantity = document.getElementById("totalQuantity");
-        totalQuantity.innerHTML = tab[0];
+                    let totalPrice = document.getElementById("totalPrice");
+                    totalPrice.innerHTML = tab[1];
 
-        let totalPrice = document.getElementById("totalPrice");
-        totalPrice.innerHTML = tab[1];
+                });
+                
 
-        //FORMULAIRE
-        //refaire cette partie pour éliminer toute les possiblité avec resEX
-        formulaireError('firstName','firstNameErrorMsg');
-        formulaireError('lastName','lastNameErrorMsg');
-        formulaireError('address','addressErrorMsg');
-        formulaireError('city','cityErrorMsg');
-        formulaireError('email','emailErrorMsg');
-
-        
-        //CONSTRUCTION DE L'OBJET POST
-        orderElement = document.querySelector('.cart__order__form');
-
-        //let products = valuesLocalStorage("panier");
-        //products = tabProdutsID(affiche,products)
-        
-        orderElement.onsubmit = (event) => {
-            let firstName = document.getElementById('firstName').value;
-            let lastName = document.getElementById('lastName').value;
-            let address = document.getElementById('address').value;
-            let city = document.getElementById('city').value;
-            let email = document.getElementById('email').value;
-            
-            let contact = {
-                firstName : firstName,
-                lastName: lastName,
-                address: address,
-                city: city,
-                email: email 
             }
-            let products = valuesLocalStorage("panier");
-            products = tabProdutsID(affiche,products);
-            //refaire la partie product pour que se soit un un tableau de sting avec bas les infos ?? qu'on donne 
+            
+            let tab = sumTotal(affiche);
 
-            let data = {contact,products};
-            //console.log(data);
+            let totalQuantity = document.getElementById("totalQuantity");
+            totalQuantity.innerHTML = tab[0];
 
-            fetch("http://localhost:3000/api/products/order", {
-            method: "POST",
-            body:  JSON.stringify(data),
-            headers: {
-                "Content-Type": "application/json",
+            let totalPrice = document.getElementById("totalPrice");
+            totalPrice.innerHTML = tab[1];
+
+            //FORMULAIRE
+
+            formulaireError('firstName','firstNameErrorMsg');
+            formulaireError('lastName','lastNameErrorMsg');
+            formulaireError('address','addressErrorMsg');
+            formulaireError('city','cityErrorMsg');
+            formulaireError('email','emailErrorMsg');
+
+            
+            //CONSTRUCTION DE L'OBJET POST
+            orderElement = document.querySelector('.cart__order__form');
+            
+            orderElement.onsubmit = (event) => {
+                let firstName = document.getElementById('firstName').value;
+                let lastName = document.getElementById('lastName').value;
+                let address = document.getElementById('address').value;
+                let city = document.getElementById('city').value;
+                let email = document.getElementById('email').value;
+                
+                let contact = {
+                    firstName : firstName,
+                    lastName: lastName,
+                    address: address,
+                    city: city,
+                    email: email 
                 }
-            })       
-            .then((response) => response.json())
-            .then((result) => {
-                if(result.orderId != undefined){
-                    //console.log("le projet a bien été ajouter :", result);
-                    //console.log(result.orderId);
-                    window.location.href = "./confirmation.html?id="+result.orderId;
-                }else {
-                    console.log('il y a une erreur');
-                }
-            })
-            .catch((error) => {
-                console.error("Error :", error.message);
-            })
+                let products = valuesLocalStorage("panier");
+                products = tabProdutsID(affiche,products);
+            
+                let data = {contact,products};
 
-           event.preventDefault();
-        }
-           
+                fetch("http://localhost:3000/api/products/order", {
+                method: "POST",
+                body:  JSON.stringify(data),
+                headers: {
+                    "Content-Type": "application/json",
+                    }
+                })       
+                .then((response) => response.json())
+                .then((result) => {
+                    if(result.orderId != undefined){
+                        localStorage.clear();
+                        window.location.href = "./confirmation.html?id="+result.orderId;
+                    }else {
+                        console.log('il y a une erreur');
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error :", error.message);
+                })
+
+                //EMPÊCHE LE FORMULAIRE DE RAFRAÎCHIR LA PAGE QUAND ON CLIQUE SUR COMMANDER
+                event.preventDefault();
+            }
+        }   
         
 });

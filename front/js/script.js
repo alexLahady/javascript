@@ -1,15 +1,5 @@
-/*test */
-/*
-fetch("http://localhost:3000/api/products")
-.then(response => response.json())
-.then(response2 => console.log(response2[5].colors));
-*/
-/*
-const response = await fetch("http://localhost:3000/api/products");
-const tab = await response.json();
-*/
-
-/*afficher tous les élément*/
+//AFFICHE TOUS LES ÉLÉMENT DANS L'API
+//a refaire 
 fetch("http://localhost:3000/api/products")
 .then(response => response.json())
 .then(response2 => {
@@ -20,7 +10,6 @@ fetch("http://localhost:3000/api/products")
         //Création des balise
         const linkElement = document.createElement("a");
         linkElement.href = "./product.html?id="+i;
-        //console.log(linkElement);
 
         const pieceElement = document.createElement("article");
 
@@ -32,11 +21,12 @@ fetch("http://localhost:3000/api/products")
 
         const titleElement = document.createElement("h3");
         titleElement.innerText = response2[i].name;
+        titleElement.classList.add("productName");
 
         const descritionElement = document.createElement("p");
         descritionElement.innerText = response2[i].description;
+        descritionElement.classList.add("productDescription");
 
-        //pieceElement.appendChild(imageElement);
         sectionItems.appendChild(linkElement);
         linkElement.appendChild(pieceElement);
         pieceElement.appendChild(imageElement);
