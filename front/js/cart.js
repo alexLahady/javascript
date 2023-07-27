@@ -20,7 +20,7 @@ function tabProdutsID(object,products) {
 //VERIFIE S'IL EXISTE UN DOUBLON
 //S'IL EXISTE ADDICTIONNER DANS LA CATEGORIE QUANTITE
 //SINON PASSER 
-function verifIdQuantityExist(id,quantity,color){
+function verifElementExist(id,quantity,color){
     let res = valuesLocalStorage("panier");
     for(let i = 0;i < res.length;i++){
 
@@ -58,8 +58,8 @@ function addtLocalStorage(id,quantity,color){
 };
 
 //CALCUL LA SOMME DE TOUS LES CANAPE ET LA QUANTITE DES CANAPE 
-//RENVOI LA VALEUR DANS UN TABLEAU 
-function sumTotal(object){
+//AFFCIHE LA SOMME ET LE PRIX APRÈS LA BOUCLE
+function sumTotalAffiche(object){
     let value =  valuesLocalStorage("panier");
     let resID, resQuantity, resPrice;
     let sumQuantity = 0;
@@ -76,7 +76,11 @@ function sumTotal(object){
         res = res + (resPrice * resQuantity);
         sumQuantity += resQuantity;
     }
-    return [sumQuantity,res];
+    let totalQuantity = document.getElementById("totalQuantity");
+    totalQuantity.innerHTML = sumQuantity;
+
+    let totalPrice = document.getElementById("totalPrice");
+    totalPrice.innerHTML = res;
 };
 
 //SUPPRIME L'ÉLÉMENT DANS LOCALSTORAGE EN FONCTION DE L'ID ET LA COULEUR
@@ -180,7 +184,7 @@ fetch("http://localhost:3000/api/products")
                 let cartObject = JSON.stringify(tabStorage);
                 localStorage.setItem("panier",cartObject);
             }else{
-                if(!verifIdQuantityExist(id,quantity,color)){
+                if(!verifElementExist(id,quantity,color)){
                     addtLocalStorage(id,quantity,color);
                 }
             }
@@ -190,6 +194,7 @@ fetch("http://localhost:3000/api/products")
         if(localStorage.length > 0){
 
             let value, resID, resColor, resQuantity;
+            //ORIGINE
             let cartOriginElement = document.getElementById('cart__items');
 
             value = valuesLocalStorage("panier");
@@ -277,19 +282,12 @@ fetch("http://localhost:3000/api/products")
                 cartQuantityElement.appendChild(cartInputElement);
 
                 //CHANGE LA VALEUR DE LA QUANTITÉ À CHAQUE CLIQUE
-                cartInputElement.addEventListener("click", (event) => {
+                cartInputElement.addEventListener("click", () => {
                     const r3 = cartDeleteElement.closest(':not(div)');
                     const r2 = cartInputElement.value;
                     
                     changeQuantity(r3.dataset.id,r3.dataset.color,r2);
-
-                    let tab = sumTotal(affiche);
-
-                    let totalQuantity = document.getElementById("totalQuantity");
-                    totalQuantity.innerHTML = tab[0];
-
-                    let totalPrice = document.getElementById("totalPrice");
-                    totalPrice.innerHTML = tab[1];
+                    sumTotalAffiche(affiche);
                 });
                 
                 //SUPPRIMER
@@ -305,35 +303,21 @@ fetch("http://localhost:3000/api/products")
                 cartDeleteElement.appendChild(cartDeleteItemElement);
 
                 //SUPPRIME L'ÉLÉMENT QUAND ON CLIQUE SUR 'SUPPRIMER'
-                cartDeleteElement.addEventListener("click", (event) => {
+                cartDeleteElement.addEventListener("click", () => {
                     const r1 = cartDeleteElement.closest(':not(div)');
                     deleteLocal(r1.dataset.id,r1.dataset.color);
                     r1.remove();
                     //window.location.reload();
-
-                    let tab = sumTotal(affiche);
-
-                    let totalQuantity = document.getElementById("totalQuantity");
-                    totalQuantity.innerHTML = tab[0];
-
-                    let totalPrice = document.getElementById("totalPrice");
-                    totalPrice.innerHTML = tab[1];
-
+                    sumTotalAffiche(affiche);
                 });
                 
 
             }
             
-            let tab = sumTotal(affiche);
-
-            let totalQuantity = document.getElementById("totalQuantity");
-            totalQuantity.innerHTML = tab[0];
-
-            let totalPrice = document.getElementById("totalPrice");
-            totalPrice.innerHTML = tab[1];
+            //SOMME TOTAL DE LA QUANTITÉ ET LE PRIX ET L'AFFCIHE 
+            sumTotalAffiche(affiche);
 
             //FORMULAIRE
-
             formulaireError('firstName','firstNameErrorMsg');
             formulaireError('lastName','lastNameErrorMsg');
             formulaireError('address','addressErrorMsg');
