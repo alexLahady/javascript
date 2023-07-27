@@ -115,7 +115,7 @@ function formulaireError(idInput,idError){
     //CHAINE DE CARACTÈRE POUR TESTER SI UN CHIFFRE EXISTE
     let masque = /[0-9]/;
 
-    formInput.addEventListener("blur", (event) => {
+    formInput.addEventListener("blur", () => {
 
         //TEST SI DANS LA PARTIE EMAIL IL EXISTE JUSTE UN @
         if (idInput == "email" && formInput.value == '@'){
@@ -169,7 +169,7 @@ fetch("http://localhost:3000/api/products")
             //REMET L'URL À LA NORMAL DONC CART.HTML
             window.history.replaceState(null, null, "./cart.html");
             
-            //AJOUTE UN NOUVELLE ÉLÉMENT DANS LOCALSTORAGE SI LE LOCAL EST VIDE
+            //AJOUTE UN NOUVEL ÉLÉMENT DANS LOCALSTORAGE SI LE LOCAL EST VIDE
             if(localStorage.length == 0){
                 let tabStorage = [];
 
