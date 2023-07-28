@@ -282,7 +282,7 @@ fetch("http://localhost:3000/api/products")
                 cartQuantityElement.appendChild(cartInputElement);
 
                 //CHANGE LA VALEUR DE LA QUANTITÉ À CHAQUE CLIQUE
-                cartInputElement.addEventListener("click", () => {
+                cartInputElement.addEventListener("change", () => {
                     const r3 = cartDeleteElement.closest(':not(div)');
                     const r2 = cartInputElement.value;
                     
