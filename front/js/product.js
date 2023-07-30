@@ -1,5 +1,4 @@
 let resultat = window.location;
-console.log(resultat);
 let url = new URL(resultat);
 let id = url.searchParams.get("id");
 
@@ -52,7 +51,7 @@ fetch("http://localhost:3000/api/products")
     
     const button = document.querySelector("button");
 
-    button.addEventListener("click", (event) => {
+    button.addEventListener("click", () => {
         let quantity = document.getElementById("quantity").value;
 
         let color = document.getElementById("colors").value;
