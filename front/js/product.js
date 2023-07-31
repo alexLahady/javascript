@@ -53,6 +53,9 @@ fetch("http://localhost:3000/api/products")
 
     button.addEventListener("click", () => {
         let quantity = document.getElementById("quantity").value;
+        if(parseInt(quantity) > 100){
+            quantity =  100;
+        }
 
         let color = document.getElementById("colors").value;
     

@@ -284,7 +284,11 @@ fetch("http://localhost:3000/api/products")
                 //CHANGE LA VALEUR DE LA QUANTITÉ À CHAQUE CLIQUE
                 cartInputElement.addEventListener("change", () => {
                     const r3 = cartDeleteElement.closest(':not(div)');
-                    const r2 = cartInputElement.value;
+                    let r2 = cartInputElement.value;
+                    if(r2 > 100){
+                        r2 = 100;
+                        cartInputElement.value = String(r2);
+                    }
                     
                     changeQuantity(r3.dataset.id,r3.dataset.color,r2);
                     sumTotalAffiche(affiche);
