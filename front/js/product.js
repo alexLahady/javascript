@@ -59,7 +59,7 @@ fetch("http://localhost:3000/api/products")
 
         let color = document.getElementById("colors").value;
     
-        linkCardElement.href= "./cart.html?id="+id+"&quantity="+quantity+"&color="+color;
+        linkCardElement.href= "./cart.html?id="+id+"&quantity="+parseInt(quantity)+"&color="+color;
 
     });
 });

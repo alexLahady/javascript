@@ -158,7 +158,8 @@ fetch("http://localhost:3000/api/products")
         if(id != null){
         
             let quantity = url.searchParams.get("quantity");
-            if(quantity == 0){ 
+            console.log(quantity);
+            if(parseInt(quantity) <= 0 || quantity == 'NaN'){ 
                 quantity = 1;
             }
             let color = url.searchParams.get("color");
@@ -285,8 +286,12 @@ fetch("http://localhost:3000/api/products")
                 cartInputElement.addEventListener("change", () => {
                     const r3 = cartDeleteElement.closest(':not(div)');
                     let r2 = cartInputElement.value;
+                    
                     if(r2 > 100){
                         r2 = 100;
+                        cartInputElement.value = String(r2);
+                    }else if(r2 <= 0){
+                        r2 = 1;
                         cartInputElement.value = String(r2);
                     }
                     
