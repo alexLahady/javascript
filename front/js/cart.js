@@ -158,7 +158,6 @@ fetch("http://localhost:3000/api/products")
         if(id != null){
         
             let quantity = url.searchParams.get("quantity");
-            console.log(quantity);
             if(parseInt(quantity) <= 0 || quantity == 'NaN'){ 
                 quantity = 1;
             }
@@ -286,7 +285,7 @@ fetch("http://localhost:3000/api/products")
                 cartInputElement.addEventListener("change", () => {
                     const r3 = cartDeleteElement.closest(':not(div)');
                     let r2 = cartInputElement.value;
-                    
+
                     if(r2 > 100){
                         r2 = 100;
                         cartInputElement.value = String(r2);
